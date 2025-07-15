@@ -1,13 +1,42 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask              import Flask, render_template, request, redirect, url_for, session, flash
+from flask_sqlalchemy   import SQLAlchemy
+from werkzeug.security  import generate_password_hash, check_password_hash
 
-from flask_sqlalchemy import SQLAlchemy
+app                                             = Flask(__name__)
+app.secret_key                                  = 'doingurmom'
+app.config['SQLALCHEMY_DATABASE_URI']           = 'sqlite:///timer.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS']    = False
+db                                              = SQLAlchemy(app)
 
-app = Flask(__name__)
-app.secret_key = 'doingurmom'
+class User(db.Model):
+    id          = db.Column(db.Integer, primary_key=True)
+    username    = db.Column(db.String(80), unique=True, nullable=False)
+    password    = db.Column(db.String(200), nullable=False)
+    level       = db.Column(db.Integer, nullable=False, default=1)
+    xp          = db.Column(db.Integer, nullable=False, default=0)
+    xp_needed   = db.Column(db.Integer, nullable=False, default=10)
+    free_hours  = db.Column(db.Integer, nullable=False, default=0)
+    free_minutes = db.Column(db.Integer, nullable=False, default=0)
 
-# username password
-USERNAME = 'user'
-PASSWORD = 'pass'
+ 
+
+class Activity(db.Model):
+    id              = db.Column(db.Integer, primary_key=True)
+    name            = db.Column(db.String, nullable=False)
+    user_id         = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    total_seconds   = db.Column(db.Integer, default=0)
+    level           = db.Column(db.Integer, default=0)
+    xp              = db.Column(db.Integer, default=0)
+    xp_needed       = db.Column(db.Integer, default=600)
+    user            = db.relationship('User', backref=db.backref('activities', lazy=True))
+
+# Generate a new id and pass if it doesn't exist already, should remove but it's just for me so who cares lol
+with app.app_context():
+    db.create_all()
+    if not User.query.filter_by(username='moon').first():
+        user = User(username='moon', password=generate_password_hash('pass'))
+        db.session.add(user)
+        db.session.commit()
 
 @app.route('/')
 def home():
@@ -18,27 +47,73 @@ def login():
     username = request.form['username']
     password = request.form['password']
 
-    if username == USERNAME and password == PASSWORD:
-        session['user'] = username
+    user = User.query.filter_by(username=username).first()
+
+    if user and check_password_hash(user.password,password):
+        session['user_id'] = user.id
+        session['username'] = user.username
         return redirect(url_for('dashboard'))
     else:
-        return 'Invalid Login'
+        return render_template('login.html')
 
 
 @app.route('/dashboard/')
 def dashboard():
-    if 'user' in session:
-        return render_template('dashboard.html', user=session['user'])
-    return redirect(url_for('home'))
-
+    user_id = session.get('user_id')
+    if 'user_id':
+        user = User.query.get(user_id)
+        activities = Activity.query.filter_by(user_id=user_id).all()
+        if user:
+            return render_template('dashboard.html', user=user, activities=activities)
+    return render_template('login.html')
 
 @app.route('/logout')
 def logout():
-    session.pop('user',None)
+    session.clear()
     return redirect(url_for('home'))
+
+@app.route('/add_activity', methods=['POST'])
+def add_activity():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    name = request.form.get('name')
+    user_id = session['user_id']
+    
+    if name:
+        new_activity = Activity(name=name, user_id=user_id)
+        db.session.add(new_activity)
+        db.session.commit()
+        print(f'Activity "{name}" added!')
+    else:
+        flash("Activity name cannot be empty.")
+    
+    return redirect(url_for('dashboard'))
+
+@app.route('/stop_tracking', methods=['POST'])
+def stop_tracking():
+    if 'user_id' not in session:
+        return redirect(url_for('home'))
+
+    activity_id = int(request.form['activity_id'])
+    seconds = int(request.form['tracked_seconds'])
+    user = User.query.get(session['user_id'])
+    activity = Activity.query.get(activity_id)
+
+    xp_earned   = seconds // 1  # 1 XP per 1 second, 600 for level up, grants 60s fun time
+    activity.xp += xp_earned
+
+    while user.xp >= user.level ** 2 * 100:
+        user.xp -= user.level ** 2 * 100
+        user.level += 1
+        flash(f"Level up! You reached level {user.level}!")
+
+    db.session.commit()
+
+    flash(f"Tracked {seconds} seconds in {activity.name}. Gained {xp_earned} XP!")
+    return redirect(url_for('dashboard'))
+
 
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-

@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+body {
+    width: 860px;
+    color: white;
+    background-color: black;
+    font-family: 'Press Start 2P', monospace;
+    height: 90vh;
+    align-items: center;
+    display: flex;
+    font-size: 18px;
+    margin: auto;
+}
+
+p {
+    margin: 4px;
+}
+
+.dashboard_container {
+    width: 640px;
+    height: 400px;
+    background-color: #002a88;
+    border-color: white;
+    border-style:solid;
+    border-width: 4px;
+    border-radius: 4px;
+    margin-right: 5px;
+}
+
+.dashboard_header {
+    display: flex;
+    margin: auto;
+    margin-top: 10px;
+    margin-left: 20px;
+}
+
+.dashboard_header_text {
+    margin-left: 20px;
+    width: 160px;
+}
+
+.dashboard_header_progress {
+    width: 300px;
+}
+
+.dashboard_xp_progress {
+    -webkit-appearance: none;
+    appearance: none;
+    color:#fff;
+    border-width: 3px;
+    background-color: #565656;
+    border-left-width: 6px;
+    border-right-width: 6px;
+    width: 300px;
+    height: 10px;
+    
+
+}
+
+progress::-moz-progress-bar {
+  background-color: #eab2b5; /* Green fill */
+}
+
+.time_tracker {
+    margin: auto;
+    margin-top: 10px;
+    margin-left: 15px;
+
+}
+
+.logout {
+
+    margin-left: 5px;
+    font-style: none;
+    color: white;
+    width: 180px;
+    text-align: center;
+    height: 380px;
+    font-size: 14px;
+
+
+    background-color: #002a88;
+    border-color: white;
+    border-style:solid;
+    padding: 10px 10px 10px 10px;
+    border-width: 4px;
+    border-radius: 4px;
+
+}
+
+.logout a {
+
+    font-style: none;
+    color: white;
+
+
+}
+li {
+    list-style-type: none;
+    padding-top : 10px;
+    padding-bottom: 10px;
+}
+.progress {
+    display: flex;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0); /* translucent black */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  padding: 20px 40px;
+
+  color: white;
+  font-family: 'Press Start 2P', monospace;
+  max-width: 90%;
+  text-align: center;
+  position: relative;
+      background-color: #002a88;
+    border-color: white;
+    border-style:solid;
+    padding: 10px 10px 10px 10px;
+    border-width: 4px;
+    border-radius: 4px;
+}
+
+input {
+    font-family: 'Press Start 2P', monospace;
+}
+
+.modal .close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 18px;
+  font-family: 'Press Start 2P';
+  color: white;
+  cursor: pointer;
+}

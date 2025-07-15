@@ -1,9 +1,129 @@
 <!DOCTYPE html>
 <html>
-<head><title>Dashboard</title></head>
+<head>
+    <link rel="stylesheet" href="{{url_for('static',filename='dashboard.css')}}">
+    <title>Dashboard</title>
+</head>
 <body>
-  <h2>Welcome, {{ user }}!</h2>
-  <p>This is the dashboard.</p>
-  <a href="/logout">Logout</a>
+
+    <div class="dashboard_container">
+        <div class="dashboard_header">
+            <img src="../static/locke.png" width="90" height="90">
+
+            <div class="dashboard_header_text">
+                <p>{{ user.username }}</p>
+                <p style="color:#44c2db">LV</p>
+                <p>{{ user.level }}</p>
+            </div>
+
+            <div class="dashboard_header_progress">
+                <p>EXP:  {{ user.xp }} </p>
+                <progress class="dashboard_xp_progress" value={{user.xp}} max="{{user.xp_needed}}"></progress>
+                <p>next: {{ user.xp_needed }}</p>
+            </div>
+        </div>
+
+        <div class="time_tracker">
+            <div class="progress" >
+                <p style="width: 220px; color:#44c2db;">Relax</p>
+                <p style="width: 100px;"> {{user.free_hours}}</p>
+                <progress class="dashboard_xp_progress"  value={{user.free_minutes}} max="60" style="width: 200px;margin-top: 7px;"></progress>
+                <p style="margin-left:12px;">USE</p>
+            </div>
+
+            {% for activity in activities %}
+            <div class="progress">
+                <p style="width: 220px; color: #44c2db;"> {{ activity.name }} </p>
+                <p style="width: 100px;">{{ activity.level }}</p>
+                <progress class="dashboard_xp_progress"  value={{activity.xp}} max={{activity.xp_needed}} style="width: 200px;margin-top: 7px;"></progress>
+                <a href="#" onclick="openTrackModal('{{ activity.id }}', '{{ activity.name }}'); return false;">GO</a>
+            </div>
+            {%endfor%}
+
+
+            
+
+
+
+        </div>
+
+        
+        
+        
+        
+    </div>
+    <div class="logout">        
+            <li><a href="Add Task">Spend Time</a></li>
+            <!-- <li><a href="Add Task">Add Task</a></li> -->
+            <li><a href="#" onclick="openModal();return false;">add activity</a></li>
+
+
+
+            <li><a href="/logout" >Logout</a></li>
+        </div>
+    <!-- Add Activity Button -->
+    
+
+    <!-- Modal Structure -->
+    <div id="activityModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>New Activity</h2>
+            <form method="POST" action="{{ url_for('add_activity') }}">
+            <input type="text" name="name" placeholder="Activity name" required>
+            <button type="submit">Add</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="trackModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <span class="close" onclick="closeTrackModal()">&times;</span>
+    <h2 id="activityName"></h2>
+    <p>Time tracked: <span id="trackTimer">0</span> seconds</p>
+    
+    <form method="POST" action="{{ url_for('stop_tracking') }}">
+      <input type="hidden" id="activityIdInput" name="activity_id">
+      <input type="hidden" id="trackedSeconds" name="tracked_seconds">
+      <button type="submit">Stop</button>
+    </form>
+  </div>
+</div>
+
+    <script>
+    function openModal() {
+    document.getElementById('activityModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+    document.getElementById('activityModal').style.display = 'none';
+    }
+</script>
+
+<script>
+let trackSeconds = 0;
+let trackInterval;
+
+function openTrackModal(activityId, activityName) {
+  document.getElementById('trackModal').style.display = 'flex';
+  document.getElementById('activityName').textContent = activityName;
+  document.getElementById('activityIdInput').value = activityId;
+  document.getElementById('trackTimer').textContent = '0';
+  document.getElementById('trackedSeconds').value = '0';
+
+  trackSeconds = 0;
+  trackInterval = setInterval(() => {
+    trackSeconds++;
+    document.getElementById('trackTimer').textContent = trackSeconds;
+    document.getElementById('trackedSeconds').value = trackSeconds;
+  }, 1000);
+}
+
+function closeTrackModal() {
+  document.getElementById('trackModal').style.display = 'none';
+  clearInterval(trackInterval);
+}
+</script>
+
 </body>
 </html>
