@@ -3,6 +3,8 @@ from flask_sqlalchemy   import SQLAlchemy
 from werkzeug.security  import generate_password_hash, check_password_hash
 import time
 
+activity_xp_needed = 600
+
 app                                             = Flask(__name__)
 app.secret_key                                  = 'doingurmom'
 app.config['SQLALCHEMY_DATABASE_URI']           = 'sqlite:///timer.db'
@@ -15,9 +17,10 @@ class User(db.Model):
     password        = db.Column(db.String(200), nullable    = False             )
     level           = db.Column(db.Integer,     nullable    = False, default =1 )
     xp              = db.Column(db.Integer,     nullable    = False, default =0 )
-    xp_needed       = db.Column(db.Integer,     nullable    = False, default =1 )
+    xp_needed       = db.Column(db.Integer,     nullable    = False, default =5 )
     free_hours      = db.Column(db.Integer,     nullable    = False, default =0 )
     free_minutes    = db.Column(db.Integer,     nullable    = False, default =0 )
+    gil             = db.Column(db.Integer,     nullable    = False, default =0 )
 
 class Activity(db.Model):
     id              = db.Column(db.Integer,     primary_key = True                                  )
@@ -26,7 +29,7 @@ class Activity(db.Model):
     total_seconds   = db.Column(db.Integer,     default     = 0                                     )
     level           = db.Column(db.Integer,     default     = 0                                     )
     xp              = db.Column(db.Integer,     default     = 0                                     )
-    xp_needed       = db.Column(db.Integer,     default     = 600                                   )
+    xp_needed       = db.Column(db.Integer,     default     = activity_xp_needed                    )
     user            = db.relationship('User',   backref     = db.backref('activities', lazy = True) )
 
 # TODO 
@@ -109,11 +112,15 @@ def stop_tracking():
 
     # Handle level-up
     activity_leveled_up = False
-    while activity.xp >= 600:
-        activity.xp -= 600
+    while activity.xp >= activity_xp_needed:
+        activity.xp -= activity_xp_needed
         activity.level += 1
         user.xp += 1
-        user.xp_needed = user.level * 5 + 1
+        while user.xp >= user.xp_needed:
+            user.xp -= user.xp_needed
+            user.level += 1
+            user.xp_needed += 5
+            
         activity_leveled_up = True
         
 
