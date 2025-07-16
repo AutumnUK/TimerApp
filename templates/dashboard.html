@@ -29,11 +29,13 @@
             <div class="progress">
                 <p style="width: 220px; color: #44c2db;"> {{ activity.name }} </p>
                 <p style="width: 100px;">{{ activity.level }}</p>
-                <progress class="dashboard_xp_progress"  value={{activity.xp}} max={{activity.xp_needed}} style="width: 200px;margin-top: 7px;"></progress>
+                <p>{{ activity.xp}} / {{ activity.xp_needed }}</p>
                 
-                <a href="#" onclick="openTrackModal('{{ activity.id }}', '{{ activity.name }}'); return false;">GO</a>
+                
+                <a href="#" style="padding-top:4px; text-align: right;margin-left: 40px;color:#db4444" onclick="openTrackModal('{{ activity.id }}', '{{ activity.name }}'); return false;">GO</a>
             </div>
-            <p style="text-align: right;margin-right: 100px">{{ activity.xp}} / {{ activity.xp_needed }}</p>
+            <progress class="dashboard_xp_progress"  value={{activity.xp}} max={{activity.xp_needed}} style="width: 590px;margin-top: 7px;"></progress>
+            
             {%endfor%}
         </div>
 

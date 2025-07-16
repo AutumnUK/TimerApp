@@ -88,8 +88,8 @@ progress::-moz-progress-bar {
 
 }
 
-.logout a {
-
+a {
+    text-decoration: none;
     font-style: none;
     color: white;
 
