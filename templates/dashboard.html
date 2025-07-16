@@ -24,27 +24,17 @@
         </div>
 
         <div class="time_tracker">
-            <div class="progress" >
-                <p style="width: 220px; color:#44c2db;">Relax</p>
-                <p style="width: 100px;"> {{user.free_hours}}</p>
-                <progress class="dashboard_xp_progress"  value={{user.free_minutes}} max="60" style="width: 200px;margin-top: 7px;"></progress>
-                <p style="margin-left:12px;">USE</p>
-            </div>
 
             {% for activity in activities %}
             <div class="progress">
                 <p style="width: 220px; color: #44c2db;"> {{ activity.name }} </p>
                 <p style="width: 100px;">{{ activity.level }}</p>
                 <progress class="dashboard_xp_progress"  value={{activity.xp}} max={{activity.xp_needed}} style="width: 200px;margin-top: 7px;"></progress>
+                
                 <a href="#" onclick="openTrackModal('{{ activity.id }}', '{{ activity.name }}'); return false;">GO</a>
             </div>
+            <p style="text-align: right;margin-right: 100px">{{ activity.xp}} / {{ activity.xp_needed }}</p>
             {%endfor%}
-
-
-            
-
-
-
         </div>
 
         
@@ -53,18 +43,12 @@
         
     </div>
     <div class="logout">        
-            <li><a href="Add Task">Spend Time</a></li>
-            <!-- <li><a href="Add Task">Add Task</a></li> -->
+
             <li><a href="#" onclick="openModal();return false;">add activity</a></li>
-
-
-
             <li><a href="/logout" >Logout</a></li>
+            
         </div>
-    <!-- Add Activity Button -->
-    
 
-    <!-- Modal Structure -->
     <div id="activityModal" class="modal" style="display:none;">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
