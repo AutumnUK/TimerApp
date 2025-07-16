@@ -98,24 +98,24 @@
     function closeModal() {
     document.getElementById('activityModal').style.display = 'none';
     }
-</script>
 
-<script>
 let trackSeconds = 0;
 let trackInterval;
 
 function openTrackModal(activityId, activityName) {
-  document.getElementById('trackModal').style.display = 'flex';
-  document.getElementById('activityName').textContent = activityName;
-  document.getElementById('activityIdInput').value = activityId;
-  document.getElementById('trackTimer').textContent = '0';
-  document.getElementById('trackedSeconds').value = '0';
+    document.getElementById('trackModal').style.display = 'flex';
+    document.getElementById('activityName').textContent = activityName;
+    document.getElementById('activityIdInput').value    = activityId;
+    document.getElementById('trackTimer').textContent   = '0';
+    document.getElementById('trackedSeconds').value     = '0';
 
-  trackSeconds = 0;
-  trackInterval = setInterval(() => {
+    trackSeconds  = 0;
+    trackInterval = setInterval(() => {
     trackSeconds++;
     document.getElementById('trackTimer').textContent = trackSeconds;
     document.getElementById('trackedSeconds').value = trackSeconds;
+
+    
   }, 1000);
 }
 
