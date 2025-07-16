@@ -1,9 +1,9 @@
 from flask              import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from flask_sqlalchemy   import SQLAlchemy
 from werkzeug.security  import generate_password_hash, check_password_hash
-import time
 
-activity_xp_needed = 600
+
+activity_xp_needed = 3600
 
 app                                             = Flask(__name__)
 app.secret_key                                  = 'doingurmom'
